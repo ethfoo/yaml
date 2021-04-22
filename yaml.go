@@ -24,6 +24,8 @@ type MapItem struct {
 	Key, Value interface{}
 }
 
+var yamlTag = "yaml"
+
 // The Unmarshaler interface may be implemented by types to customize their
 // behavior when being unmarshaled from a YAML document. The UnmarshalYAML
 // method receives a function that may be called to unmarshal the original
@@ -93,6 +95,12 @@ func UnmarshalStrict(in []byte, out interface{}) (err error) {
 type Decoder struct {
 	strict bool
 	parser *parser
+}
+
+func SetTagName(tag string) {
+	if tag != "" {
+		yamlTag = tag
+	}
 }
 
 // NewDecoder returns a new decoder that reads from r.
@@ -327,7 +335,7 @@ func getStructInfo(st reflect.Type) (*structInfo, error) {
 
 		info := fieldInfo{Num: i}
 
-		tag := field.Tag.Get("yaml")
+		tag := field.Tag.Get(yamlTag)
 		if tag == "" && strings.Index(string(field.Tag), ":") < 0 {
 			tag = string(field.Tag)
 		}
